@@ -4,4 +4,4 @@
 
 [![The-Place-Main.gif](https://i.postimg.cc/G2NXgYK8/The-Place-Main.gif)](https://postimg.cc/MM70vnhq)
 
-И я вообщем поискал, и нашел типа такой [сайт](https://pixelbattle.fun) тоже похожий на такое.
+И я вообщем поискал, и нашел типа такой [сайт](https://pixelbattle.fun) тоже похожий на такое. Ну прикиньте сделать такое же пространство только в 3d? Такое ещё точно никто не делал)))
