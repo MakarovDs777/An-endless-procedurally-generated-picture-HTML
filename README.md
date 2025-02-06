@@ -8,7 +8,15 @@
 
 # An-endless-procedurally-generated-picture-2
 
-В общем, я добавил [третью версию](https://codepen.io/HoytII/pen/KKOmXGJ), которая добавляет сид, как в minecraft, при генерации которого создается определенный тип генерации шума.
+В общем, я добавил [второй версию](https://codepen.io/HoytII/pen/KKOmXGJ), которая добавляет сид, как в minecraft, при генерации которого создается определенный тип генерации шума.
+
+# An-endless-procedurally-generated-picture-3
+
+В [третей версии](https://codepen.io/HoytII/pen/bNbPyQy) добавлена кнопка переключения на случайную координату в диапозоне 100 000 по вертикали, и горизонтали.
+
+# An-endless-procedurally-generated-picture-4
+
+В [четвертой версии](https://codepen.io/HoytII/pen/azogrey) добавлена кнопка авто-переключения на случайную координату в диапозоне 100 000 по вертикали, и горизонтали за случайноей выбранное время которое можно изменить в поле.
 
 # An endless picture on which you can draw.
 
