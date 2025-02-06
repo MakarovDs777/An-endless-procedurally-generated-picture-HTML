@@ -1,0 +1,132 @@
+<html>
+<head>
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+    }
+    #canvas {
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="canvas" width="800" height="600"></canvas>
+  <input type="number" id="xInput" placeholder="X coordinate">
+  <input type="number" id="yInput" placeholder="Y coordinate">
+  <input type="number" id="zoomInput" placeholder="Zoom level">
+  <input type="text" id="seedInput" placeholder="Seed">
+  <button id="randomBtn">Случайные координаты</button>
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/seedrandom/3.0.5/seedrandom.min.js"></script>
+  <script>
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+    const xInput = document.getElementById('xInput');
+    const yInput = document.getElementById('yInput');
+    const zoomInput = document.getElementById('zoomInput');
+    const seedInput = document.getElementById('seedInput');
+    const randomBtn = document.getElementById('randomBtn');
+
+    let x = 0;
+    let y = 0;
+    let zoom = 1;
+    let isDragging = false;
+    let offsetX = 0;
+    let offsetY = 0;
+    let seed = Math.random().toString(36).substr(2, 9);
+    let random = new Math.seedrandom(seed);
+
+    function generateNoise(x, y, width, height) {
+      const imageData = ctx.createImageData(width, height);
+      const data = imageData.data;
+
+      for (let i = 0; i < width * height * 4; i += 4) {
+        const r = Math.floor(Math.random() * 256);
+        const g = Math.floor(Math.random() * 256);
+        const b = Math.floor(Math.random() * 256);
+        data[i] = r;
+        data[i + 1] = g;
+        data[i + 2] = b;
+        data[i + 3] = 255;
+      }
+
+      ctx.putImageData(imageData, 0, 0);
+    }
+
+    function updateInputs() {
+      xInput.value = x;
+      yInput.value = y;
+      zoomInput.value = zoom;
+      seedInput.value = seed;
+    }
+
+    function handleMouseDown(e) {
+      const rect = canvas.getBoundingClientRect();
+      isDragging = true;
+      offsetX = e.clientX - rect.left;
+      offsetY = e.clientY - rect.top;
+    }
+
+    function handleMouseMove(e) {
+      if (isDragging) {
+        const rect = canvas.getBoundingClientRect();
+        const newX = x + (e.clientX - rect.left - offsetX) / zoom;
+        const newY = y + (e.clientY - rect.top - offsetY) / zoom;
+        x = newX;
+        y = newY;
+        generateNoise(x, y, canvas.width * zoom, canvas.height * zoom);
+        updateInputs();
+      }
+    }
+
+    function handleMouseUp(e) {
+      isDragging = false;
+    }
+
+    function handleWheel(e) {
+      const delta = e.deltaY > 0 ? 1.1 : 0.9;
+      zoom *= delta;
+      zoom = Math.max(0.1, Math.min(zoom, 5));
+      generateNoise(x, y, canvas.width * zoom, canvas.height * zoom);
+      updateInputs();
+    }
+
+    function handleInputChange(e) {
+      if (e.target === xInput) {
+        x = parseFloat(e.target.value);
+      } else if (e.target === yInput) {
+        y = parseFloat(e.target.value);
+      } else if (e.target === zoomInput) {
+        zoom = parseFloat(e.target.value);
+        zoom = Math.max(0.1, Math.min(zoom, 5));
+      } else if (e.target === seedInput) {
+        seed = e.target.value;
+      }
+      generateNoise(x, y, canvas.width * zoom, canvas.height * zoom);
+      updateInputs();
+    }
+
+    function handleRandomCoordinates() {
+      x = Math.floor(Math.random() * 100000);
+      y = Math.floor(Math.random() * 100000);
+      generateNoise(x, y, canvas.width * zoom, canvas.height * zoom);
+      updateInputs();
+    }
+
+    canvas.addEventListener('mousedown', handleMouseDown);
+    canvas.addEventListener('mousemove', handleMouseMove);
+    canvas.addEventListener('mouseup', handleMouseUp);
+    canvas.addEventListener('wheel', handleWheel);
+
+    xInput.addEventListener('change', handleInputChange);
+    yInput.addEventListener('change', handleInputChange);
+    zoomInput.addEventListener('change', handleInputChange);
+    seedInput.addEventListener('change', handleInputChange);
+    randomBtn.addEventListener('click', handleRandomCoordinates);
+
+    generateNoise(x, y, canvas.width * zoom, canvas.height * zoom);
+    updateInputs();
+  </script>
+</body>
+</html>
