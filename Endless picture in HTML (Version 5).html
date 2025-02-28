@@ -1,7 +1,7 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-height">
   <title>Генератор изображений</title>
   <style>
     body {
@@ -11,25 +11,42 @@
     #canvas {
       display: block;
     }
+    #controls {
+      position: absolute;
+      top: 600px;
+      left: 0px;
+      background: rgba(255, 255, 255, 0.8);
+      padding: 10px;
+      border-radius: 5px;
+    }
+    input {
+      margin: 5px 0;
+    }
   </style>
 </head>
 <body>
+  <div id="controls">
+    <input type="number" id="minXInput" placeholder="Мин X" value="0">
+    <input type="number" id="maxXInput" placeholder="Макс X" value="800">
+    <input type="number" id="minYInput" placeholder="Мин Y" value="0">
+    <input type="number" id="maxYInput" placeholder="Макс Y" value="600">
+    <input type="number" id="xInput" placeholder="X координата">
+    <input type="number" id="yInput" placeholder="Y координата">
+    <button id="randomBtn">Случайные координаты</button>
+    <button id="generateBtn">Сгенерировать изображение</button>
+    <input type="number" id="speedInput" placeholder="Интервал перемещения (мс)" value="1000">
+    <button id="moveBtn">Авто-перемещение</button>
+  </div>
   <canvas id="canvas" width="800" height="600"></canvas>
-  <input type="number" id="xInput" placeholder="X координата">
-  <input type="number" id="yInput" placeholder="Y координата">
-  <input type="text" id="seedInput" placeholder="Сид">
-  <button id="randomBtn">Случайные координаты</button>
-  <button id="generateBtn">Сгенерировать изображение</button>
-  <input type="number" id="speedInput" placeholder="Интервал перемещения (мс)" value="1000">
-  <button id="moveBtn">Авто-перемещение</button>
-
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/seedrandom/3.0.5/seedrandom.min.js"></script>
   <script>
     const canvas = document.getElementById('canvas');
     const ctx = canvas.getContext('2d');
+    const minXInput = document.getElementById('minXInput');
+    const maxXInput = document.getElementById('maxXInput');
+    const minYInput = document.getElementById('minYInput');
+    const maxYInput = document.getElementById('maxYInput');
     const xInput = document.getElementById('xInput');
     const yInput = document.getElementById('yInput');
-    const seedInput = document.getElementById('seedInput');
     const randomBtn = document.getElementById('randomBtn');
     const generateBtn = document.getElementById('generateBtn');
     const moveBtn = document.getElementById('moveBtn');
@@ -37,25 +54,22 @@
 
     let x = 0;
     let y = 0;
-    let seed = 1; // Дефолтный сид
-    let frameCount = 10; // Количество кадров
-    let currentFrameIndex = 0;
     let moveInterval = null;
     let isMoving = false;
+    let isDragging = false;
 
-    function generateSequentialColors(seed) {
+    function generateSequentialColors() {
       const imageData = ctx.createImageData(canvas.width, canvas.height);
       const data = imageData.data;
 
       const totalPixels = canvas.width * canvas.height;
 
-      Math.seedrandom(seed + currentFrameIndex); // Устанавливаем сид для каждого кадра
-
       for (let i = 0; i < totalPixels; i++) {
-        let r = (i * 3) % 256;
-        let g = (i * 3 + 1) % 256;
-        let b = (i * 3 + 2) % 256;
-        
+        // Генерация последовательных RGB значений с учетом координат
+        let r = (i + x) % 256;       // Красный
+        let g = (i + 1 + x) % 256;   // Зеленый
+        let b = (i + 2 + x) % 256;   // Синий
+
         data[i * 4] = r;       // Red
         data[i * 4 + 1] = g;   // Green
         data[i * 4 + 2] = b;   // Blue
@@ -68,13 +82,22 @@
     function updateInputs() {
       xInput.value = Math.round(x);
       yInput.value = Math.round(y);
-      seedInput.value = seed;
+    }
+
+    function getRandomCoordinate(min, max) {
+      // Генерация случайной координаты в пределах min - max
+      return Math.floor(Math.random() * (max - min + 1)) + min;
     }
 
     function handleRandomCoordinates() {
-      x = Math.floor(Math.random() * 100000);
-      y = Math.floor(Math.random() * 100000);
-      generateSequentialColors(seed); // Генерация изображения с новыми координатами
+      const minX = parseInt(minXInput.value) || 0;
+      const maxX = parseInt(maxXInput.value) || canvas.width;
+      const minY = parseInt(minYInput.value) || 0;
+      const maxY = parseInt(maxYInput.value) || canvas.height;
+
+      x = getRandomCoordinate(minX, maxX);
+      y = getRandomCoordinate(minY, maxY);
+      generateSequentialColors();
       updateInputs();
     }
 
@@ -85,10 +108,15 @@
         moveBtn.textContent = "Авто-перемещение"; // Изменить текст кнопки
       } else {
         const move = () => {
-          x = Math.floor(Math.random() * 100000);
-          y = Math.floor(Math.random() * 100000);
-          generateSequentialColors(seed); // Генерация изображения при случайном перемещении
-          updateInputs();
+          const minX = parseInt(minXInput.value) || 0;
+          const maxX = parseInt(maxXInput.value) || canvas.width;
+          const minY = parseInt(minYInput.value) || 0;
+          const maxY = parseInt(maxYInput.value) || canvas.height;
+
+          x = getRandomCoordinate(minX, maxX);   // Генерация случайных координат в пределах указанных значений
+          y = getRandomCoordinate(minY, maxY);   // Генерация случайных координат в пределах указанных значений
+          generateSequentialColors();
+          updateInputs(); // Обновляем координаты в полях ввода
         };
 
         const interval = parseFloat(speedInput.value) || 1000;
@@ -101,27 +129,73 @@
     }
 
     function handleInputChange() {
-      x = parseInt(xInput.value) || 0;
-      y = parseInt(yInput.value) || 0;
-      seed = seedInput.value || 1;
-      generateSequentialColors(seed); // Генерация изображения при изменении
+      // Чтение значений из полей ввода
+      const newX = parseInt(xInput.value) || 0;
+      const newY = parseInt(yInput.value) || 0;
+
+      x = newX;
+      y = newY;
+
+      // Генерация изображения при изменении координат
+      generateSequentialColors();
       updateInputs();
     }
 
-    generateBtn.addEventListener('click', () => {
-      generateSequentialColors(seed); // Генерация изображения по текущему сиду
-      currentFrameIndex++;
-      if (currentFrameIndex >= frameCount) {
-        currentFrameIndex = 0; // Сбросить индекс, чтобы повторять
+    function handleKeyDown(event) {
+      if (event.key === "Enter") {
+        handleInputChange(); // Обновляем координаты при нажатии Enter
       }
+    }
+
+    function handleMouseDown(e) {
+      const rect = canvas.getBoundingClientRect();
+      isDragging = true;
+
+      // Устанавливаем координаты на основе положения мыши
+      const mouseX = Math.round(e.clientX - rect.left);
+      const mouseY = Math.round(e.clientY - rect.top);
+      x = mouseX;
+      y = mouseY;
+
+      // Генерация изображения на основе новых координат
+      generateSequentialColors();
       updateInputs();
-    });
+    }
+
+    function handleMouseMove(e) {
+      if (isDragging) {
+        const rect = canvas.getBoundingClientRect();
+
+        // Обновляем только координаты в соответствии с движением мыши
+        x = Math.round(e.clientX - rect.left);
+        y = Math.round(e.clientY - rect.top);
+  
+        generateSequentialColors(); // Генерация изображения при перемещении
+        updateInputs();
+      }
+    }
+
+    function handleMouseUp() {
+      isDragging = false; // Окончание перетаскивания
+    }
 
     randomBtn.addEventListener('click', handleRandomCoordinates);
+    generateBtn.addEventListener('click', () => {
+      generateSequentialColors(); // Генерация изображения по текущему состоянию
+      updateInputs();
+    });
     moveBtn.addEventListener('click', toggleAutoMove);
 
+    // Добавляем обработчики событий для полей ввода
+    xInput.addEventListener('keydown', handleKeyDown);
+    yInput.addEventListener('keydown', handleKeyDown);
+    
+    canvas.addEventListener('mousedown', handleMouseDown);
+    canvas.addEventListener('mousemove', handleMouseMove);
+    canvas.addEventListener('mouseup', handleMouseUp);
+    
     // Начальная генерация
-    generateSequentialColors(seed);
+    generateSequentialColors();
     updateInputs();
   </script>
 </body>
