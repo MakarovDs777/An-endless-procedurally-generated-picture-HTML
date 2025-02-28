@@ -18,6 +18,10 @@
 
 В [четвертой версии](https://codepen.io/HoytII/pen/azogrey) добавлена кнопка авто-переключения на случайную координату в диапозоне 100 000 по вертикали, и горизонтали за случайноей выбранное время которое можно изменить в поле.
 
+# An-endless-procedurally-generated-picture-5
+
+В [пятой версии](https://codepen.io/HoytII/pen/vEYyqgj) я сделал Генерацию по порядку без повторений (в данном случае 3-значные последовательности) RGB значений по заданному сиду для каждого кадра.
+
 # An endless picture on which you can draw.
 
 Not so long ago, I came across a YouTube video https://www.youtube.com/watch?v=K5O3UgLG2Jw in short, the essence of the video is that there is a picture on it, and everyone can go to this site and draw something on it, and as a result, such a war of drawings turned out, and I thought what if we make this picture infinitely procedurally generated? That would be really cool!
