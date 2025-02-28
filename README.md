@@ -20,7 +20,7 @@
 
 # An-endless-procedurally-generated-picture-5
 
-В [пятой версии](https://codepen.io/HoytII/pen/vEYyqgj) я сделал Генерацию по порядку без повторений (в данном случае 3-значные последовательности) RGB значений по заданному сиду для каждого кадра.
+В [пятой версии](https://codepen.io/HoytII/pen/vEYyqgj) я сделал Генерацию по порядку без повторений (в данном случае 3-значные последовательности) RGB значений для каждого кадра.
 
 # An endless picture on which you can draw.
 
