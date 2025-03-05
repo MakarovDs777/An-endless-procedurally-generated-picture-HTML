@@ -1,0 +1,121 @@
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-height">
+  <title>Генератор изображений</title>
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+    }
+    #canvas {
+      display: block;
+    }
+    #controls {
+      position: absolute;
+      top: 600px;
+      left: 0px;
+      background: rgba(255, 255, 255, 0.8);
+      padding: 10px;
+      border-radius: 5px;
+    }
+    input {
+      margin: 5px 0;
+    }
+  </style>
+</head>
+<body>
+  <div id="controls">
+    <input type="number" id="minXInput" placeholder="Мин X" value="0" min="0" max="16777215">
+    <input type="number" id="maxXInput" placeholder="Макс X" value="16777215" min="0" max="16777215">
+    <input type="number" id="minYInput" placeholder="Мин Y" value="0" min="0" max="16777215">
+    <input type="number" id="maxYInput" placeholder="Макс Y" value="16777215" min="0" max="16777215">
+    <input type="number" id="xInput" placeholder="X координата" value="0" min="0" max="16777215">
+    <input type="number" id="yInput" placeholder="Y координата" value="0" min="0" max="16777215">
+    <button id="randomBtn">Случайные координаты</button>
+    <button id="generateBtn">Сгенерировать изображение</button>
+    <input type="number" id="speedInput" placeholder="Интервал перемещения (мс)" value="1000">
+    <button id="moveBtn">Авто-перемещение</button>
+  </div>
+  <canvas id="canvas" width="800" height="600"></canvas>
+  <script>
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+    const minXInput = document.getElementById('minXInput');
+    const maxXInput = document.getElementById('maxXInput');
+    const minYInput = document.getElementById('minYInput');
+    const maxYInput = document.getElementById('maxYInput');
+    const xInput = document.getElementById('xInput');
+    const yInput = document.getElementById('yInput');
+    const randomBtn = document.getElementById('randomBtn');
+    const generateBtn = document.getElementById('generateBtn');
+    const moveBtn = document.getElementById('moveBtn');
+    const speedInput = document.getElementById('speedInput');
+
+    let currentFrameIndex = 0;
+    const totalColors = 256 * 256 * 256; // Общее количество уникальных цветов RGB
+    const rgbColors = generateRGBColors();
+
+    function generateRGBColors() {
+      const colors = [];
+      for (let r = 0; r < 256; r++) {
+        for (let g = 0; g < 256; g++) {
+          for (let b = 0; b < 256; b++) {
+            colors.push([r, g, b]);
+          }
+        }
+      }
+      return colors;
+    }
+
+    function generateImageFromColor(index) {
+      const imageData = ctx.createImageData(canvas.width, canvas.height);
+      const data = imageData.data;
+
+      for (let i = 0; i < data.length / 4; i++) {
+        const colorIndex = (index + i) % totalColors;
+        const [r, g, b] = rgbColors[colorIndex];
+
+        data[i * 4] = r;     // Red
+        data[i * 4 + 1] = g; // Green
+        data[i * 4 + 2] = b; // Blue
+        data[i * 4 + 3] = 255; // Alpha
+      }
+
+      ctx.putImageData(imageData, 0, 0);
+    }
+
+    function updateInputs() {
+      xInput.value = currentFrameIndex; // Используйте текущий индекс кадра вместо координат
+      yInput.value = 0; // В данном контексте y не используется
+    }
+
+    function handleRandomCoordinates() {
+      const x = Math.floor(Math.random() * totalColors);
+      currentFrameIndex = x; // Сделаем случайное значение для кадра
+      generateImageFromColor(currentFrameIndex);
+      updateInputs();
+    }
+
+    function handleInputChange() {
+      const newFrameIndex = parseInt(xInput.value) || 0;
+      currentFrameIndex = Math.max(0, Math.min(totalColors - 1, newFrameIndex)); // Запомним, что это индекс кадра
+      generateImageFromColor(currentFrameIndex);
+      updateInputs();
+    }
+
+    randomBtn.addEventListener('click', handleRandomCoordinates);
+    generateBtn.addEventListener('click', handleInputChange); // Генерация изображения по текущему состоянию
+
+    xInput.addEventListener('keydown', (event) => {
+      if (event.key === "Enter") {
+        handleInputChange(); // Обновляем изображение при нажатии Enter
+      }
+    });
+
+    // Начальная генерация
+    generateImageFromColor(currentFrameIndex);
+    updateInputs();
+  </script>
+</body>
+</html>
