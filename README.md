@@ -22,6 +22,12 @@
 
 В [пятой версии](https://codepen.io/HoytII/pen/vEYyqgj) я сделал Генерацию по порядку без повторений (в данном случае 3-значные последовательности) RGB значений для каждого кадра.
 
+# An-endless-procedurally-generated-picture-6
+
+теперь мне нужно что-бы сначала шли изображения перестановок всех цветов RGB без повторений, а потом изображения RGB с дубликатами ЧТО-БЫ ЭТО БЫЛО ПО ПОРЯДКУ, и получатся всевозможные вариации создания всевозможных изображений.
+
+Вот что у меня получилось -> [Онлайн версия](https://codepen.io/HoytII/pen/yyLbJxm).
+
 # An endless picture on which you can draw.
 
 Not so long ago, I came across a YouTube video https://www.youtube.com/watch?v=K5O3UgLG2Jw in short, the essence of the video is that there is a picture on it, and everyone can go to this site and draw something on it, and as a result, such a war of drawings turned out, and I thought what if we make this picture infinitely procedurally generated? That would be really cool!
